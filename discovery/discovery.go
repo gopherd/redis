@@ -34,23 +34,23 @@ type discoveryImpl struct {
 	client  *redis.Client
 }
 
-func (d *discoveryImpl) key(serviceName string) string {
-	return d.options.Prefix + serviceName
+func (d *discoveryImpl) key(name string) string {
+	return d.options.Prefix + name
 }
 
 // Register registers a service
-func (d *discoveryImpl) Register(ctx context.Context, serviceName, serviceId string, content string) error {
-	return d.client.HSet(ctx, d.key(serviceName), serviceId, content).Err()
+func (d *discoveryImpl) Register(ctx context.Context, name, id string, content string) error {
+	return d.client.HSet(ctx, d.key(name), id, content).Err()
 }
 
 // Unregister unregisters a service
-func (d *discoveryImpl) Unregister(ctx context.Context, serviceName, serviceId string) error {
-	return d.client.HDel(ctx, d.key(serviceName), serviceId).Err()
+func (d *discoveryImpl) Unregister(ctx context.Context, name, id string) error {
+	return d.client.HDel(ctx, d.key(name), id).Err()
 }
 
 // Resolve resolves any one service by name
-func (d *discoveryImpl) Resolve(ctx context.Context, serviceName string) (serviceId, content string, err error) {
-	result, err := d.client.HGetAll(ctx, d.key(serviceName)).Result()
+func (d *discoveryImpl) Resolve(ctx context.Context, name string) (id, content string, err error) {
+	result, err := d.client.HGetAll(ctx, d.key(name)).Result()
 	if err != nil {
 		return "", "", err
 	}
@@ -61,6 +61,6 @@ func (d *discoveryImpl) Resolve(ctx context.Context, serviceName string) (servic
 }
 
 // Resolve resolves all services by name
-func (d *discoveryImpl) ResolveAll(ctx context.Context, serviceName string) (map[string]string, error) {
-	return d.client.HGetAll(ctx, d.key(serviceName)).Result()
+func (d *discoveryImpl) ResolveAll(ctx context.Context, name string) (map[string]string, error) {
+	return d.client.HGetAll(ctx, d.key(name)).Result()
 }
