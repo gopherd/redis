@@ -3,8 +3,6 @@ package api_test
 import (
 	"testing"
 
-	"github.com/go-redis/redis/v8"
-
 	. "github.com/gopherd/redis/api"
 )
 
@@ -24,7 +22,7 @@ func TestParseOptions(t *testing.T) {
 		{"127.0.0.1:26379?pool_size=NaN", "tcp", "127.0.0.1:26379", 0, "", "", true},
 		{"invalid://xxx", "", "", 0, "", "", true},
 	} {
-		var options redis.Options
+		var options Options
 		if err := ParseSource(&options, tc.source); err != nil {
 			if !tc.err {
 				t.Errorf("%dth: ParseSource %s error: %v", i, tc.source, err)

@@ -35,6 +35,13 @@ func getscheme(rawurl string) (scheme, path string, err error) {
 	return "", rawurl, nil
 }
 
+// Options represents redis options
+type Options struct {
+	redis.Options
+
+	Prefix string
+}
+
 // ParseSource parses options source string. Formats of source:
 //
 //	[network://]host:port?k1=v1&k2=v2&...&kn=vn
@@ -45,7 +52,7 @@ func getscheme(rawurl string) (scheme, path string, err error) {
 //	127.0.0.1:26379
 //	tcp://127.0.0.1:26379
 //	tcp://127.0.0.1:26379?db=1&username=foo&password=123456
-func ParseSource(options *redis.Options, source string) error {
+func ParseSource(options *Options, source string) error {
 	scheme, rest, err := getscheme(source)
 	if err != nil || len(scheme) == 0 || len(rest) < 2 || rest[0] != '/' || rest[1] != '/' {
 		source = "tcp://" + source
@@ -80,14 +87,15 @@ func ParseSource(options *redis.Options, source string) error {
 		Duration(&options.PoolTimeout, "pool_timeout", 0).
 		Duration(&options.IdleTimeout, "idle_timeout", 0).
 		Duration(&options.IdleCheckFrequency, "idle_check_frequency", 0).
+		String(&options.Prefix, "prefix", "").
 		Err()
 }
 
 // NewClient returns a redis client by options source string
-func NewClient(source string) (*redis.Client, error) {
-	var options redis.Options
+func NewClient(source string) (*redis.Client, *Options, error) {
+	var options Options
 	if err := ParseSource(&options, source); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return redis.NewClient(&options), nil
+	return redis.NewClient(&options.Options), &options, nil
 }
