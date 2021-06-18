@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/gopherd/doge/text/query"
+	"github.com/gopherd/doge/query"
 )
 
 // Maybe rawurl is of the form scheme:path.
@@ -72,7 +72,7 @@ func ParseSource(options *Options, source string) error {
 	if err != nil {
 		return err
 	}
-	return query.NewParser(query.Query(q)).
+	return query.New(query.Query(q)).
 		String(&options.Username, "username", "").
 		String(&options.Password, "password", "").
 		Int(&options.DB, "db", 0).
