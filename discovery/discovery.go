@@ -39,7 +39,17 @@ func (d *discoveryImpl) key(name string) string {
 }
 
 // Register registers a service
-func (d *discoveryImpl) Register(ctx context.Context, name, id string, content string) error {
+func (d *discoveryImpl) Register(ctx context.Context, name, id string, content string, nx bool) error {
+	if nx {
+		ok, err := d.client.HSetNX(ctx, d.key(name), id, content).Result()
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return discovery.ErrExist
+		}
+		return nil
+	}
 	return d.client.HSet(ctx, d.key(name), id, content).Err()
 }
 
