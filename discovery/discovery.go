@@ -58,6 +58,11 @@ func (d *discoveryImpl) Unregister(ctx context.Context, name, id string) error {
 	return d.client.HDel(ctx, d.key(name), id).Err()
 }
 
+// Finds finds service content
+func (d *discoveryImpl) Find(ctx context.Context, name, id string) (string, error) {
+	return d.client.HGet(ctx, d.key(name), id).Result()
+}
+
 // Resolve resolves any one service by name
 func (d *discoveryImpl) Resolve(ctx context.Context, name string) (id, content string, err error) {
 	result, err := d.client.HGetAll(ctx, d.key(name)).Result()
