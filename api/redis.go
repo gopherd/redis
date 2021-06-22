@@ -8,33 +8,6 @@ import (
 	"github.com/gopherd/doge/query"
 )
 
-// Maybe rawurl is of the form scheme:path.
-// (Scheme must be [a-zA-Z][a-zA-Z0-9+-.]*)
-// If so, return scheme, path; else return "", rawurl.
-func getscheme(rawurl string) (scheme, path string, err error) {
-	for i := 0; i < len(rawurl); i++ {
-		c := rawurl[i]
-		switch {
-		case 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z':
-		// do nothing
-		case '0' <= c && c <= '9' || c == '+' || c == '-' || c == '.':
-			if i == 0 {
-				return "", rawurl, nil
-			}
-		case c == ':':
-			if i == 0 {
-				return "", "", errors.New("missing protocol scheme")
-			}
-			return rawurl[:i], rawurl[i+1:], nil
-		default:
-			// we have encountered an invalid character,
-			// so there is no valid scheme
-			return "", rawurl, nil
-		}
-	}
-	return "", rawurl, nil
-}
-
 // Options represents redis options
 type Options struct {
 	redis.Options
@@ -53,11 +26,7 @@ type Options struct {
 //	tcp://127.0.0.1:26379
 //	tcp://127.0.0.1:26379?db=1&username=foo&password=123456
 func ParseSource(options *Options, source string) error {
-	scheme, rest, err := getscheme(source)
-	if err != nil || len(scheme) == 0 || len(rest) < 2 || rest[0] != '/' || rest[1] != '/' {
-		source = "tcp://" + source
-	}
-	u, err := url.Parse(source)
+	u, err := query.ParseURL(source, "tcp")
 	if err != nil {
 		return err
 	}
