@@ -214,6 +214,7 @@ func newPuller(sub *redis.PubSub, options *api.Options, topic string, consumer m
 }
 
 func (p *puller) start() error {
+	go p.consumer.Consume(p.topic, p.claim)
 	ch := p.sub.Channel()
 FOR:
 	for {
@@ -246,5 +247,5 @@ func newClaim() *claim {
 	}
 }
 
-func (claim *claim) Err() chan<- error      { return claim.err }
-func (claim *claim) Message() chan<- []byte { return claim.msg }
+func (claim *claim) Err() <-chan error      { return claim.err }
+func (claim *claim) Message() <-chan []byte { return claim.msg }
