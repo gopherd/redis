@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/go-redis/redis/v8"
-
 	"github.com/gopherd/doge/service/discovery"
-	redisapi "github.com/gopherd/redis/api"
+
+	"github.com/gopherd/redis/api"
 )
 
 func init() {
@@ -18,11 +18,11 @@ type driver struct {
 
 // Open implements discovery.Driver Open method
 func (d driver) Open(source string) (discovery.Discovery, error) {
-	client, options, err := redisapi.NewClient(source)
+	client, options, err := api.NewClient(source)
 	if err != nil {
 		return nil, err
 	}
-	options.Prefix += "service.discovery."
+	options.Prefix += "discovery.registry."
 	return &discoveryImpl{
 		options: options,
 		client:  client,
@@ -30,7 +30,7 @@ func (d driver) Open(source string) (discovery.Discovery, error) {
 }
 
 type discoveryImpl struct {
-	options *redisapi.Options
+	options *api.Options
 	client  *redis.Client
 }
 

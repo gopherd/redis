@@ -1,4 +1,4 @@
-package zmq
+package mq
 
 import (
 	"context"
@@ -9,11 +9,12 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gopherd/doge/mq"
 	"github.com/gopherd/doge/service/discovery"
+
 	"github.com/gopherd/redis/api"
 )
 
 func init() {
-	mq.Register("redismq", new(driver))
+	mq.Register("redis", new(driver))
 }
 
 type driver struct {
