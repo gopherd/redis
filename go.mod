@@ -9,5 +9,4 @@ require (
 
 replace (
 	github.com/gopherd/doge => ../doge
-	github.com/gopherd/log => ../log
 )
