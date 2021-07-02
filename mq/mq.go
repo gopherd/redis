@@ -100,7 +100,7 @@ func (c *conn) Subscribe(topic string, consumer mq.Consumer) error {
 	if err != nil {
 		return err
 	}
-	if err := c.discovery.Register(context.TODO(), "redismq/"+topic, "0", c.options.Addr, false); err != nil {
+	if err := c.discovery.Register(context.TODO(), "redismq/"+topic, "0", c.options.Addr, false, 0); err != nil {
 		return err
 	}
 	go p.start()
