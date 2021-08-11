@@ -6,5 +6,3 @@ require (
 	github.com/go-redis/redis/v8 v8.10.0
 	github.com/gopherd/doge v0.0.18
 )
-
-replace github.com/gopherd/doge => ../doge
